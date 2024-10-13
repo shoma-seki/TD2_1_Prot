@@ -12,14 +12,14 @@ public class EnemyBulletScript : MonoBehaviour
 
     public Vector3 scale;
 
-    //private float aliveTime = 3f;
+    private float aliveTime = 10f;
 
     // Start is called before the first frame update
     void Start()
     {
         player = FindAnyObjectByType<PlayerScript>();
         position = transform.position;
-        direction = new Vector3(player.transform.position.x, position.y, player.transform.position.z) - position;
+        direction = player.transform.position - position;
 
         scale = transform.localScale;
     }
@@ -41,10 +41,18 @@ public class EnemyBulletScript : MonoBehaviour
             Destroy(gameObject);
         }
 
-        //aliveTime -= Time.deltaTime;
-        //if (aliveTime < 0f)
-        //{
-        //    Destroy(gameObject);
-        //}
+        aliveTime -= Time.deltaTime;
+        if (aliveTime < 0f)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            Destroy(gameObject);
+        }
     }
 }

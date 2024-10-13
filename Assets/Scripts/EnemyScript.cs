@@ -14,9 +14,20 @@ public class EnemyScript : MonoBehaviour
 
     private bool isStart;
 
-    private float shotCoolTime = 0.5f;
-    private float kShotCoolTime = 0.5f;
+    private float shotCoolTime = 3f;
+    private float kShotCoolTime = 3f;
     public GameObject bullet;
+
+    private bool CanFire;
+
+    public GameObject beamWarning;
+    private float beamWarningTime = 1.5f;
+    private float kBeamWarningTime = 1.5f;
+
+    public EnemyBeamScript beam;
+    private float fireTime;
+
+    public bool isWeak;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +35,7 @@ public class EnemyScript : MonoBehaviour
         player = FindAnyObjectByType<PlayerScript>();
         position = transform.position;
 
-        transform.localScale = Vector3.zero;
+        //transform.localScale = Vector3.zero;
     }
 
     // Update is called once per frame
@@ -34,7 +45,7 @@ public class EnemyScript : MonoBehaviour
         {
             scaleT += 2f * Time.deltaTime;
             scaleT = Mathf.Clamp01(scaleT);
-            transform.localScale = Vector3.Lerp(Vector3.zero, new Vector3(2, 2, 2), EaseOutQuint(scaleT));
+            //transform.localScale = Vector3.Lerp(Vector3.zero, new Vector3(5, 5, 5), EaseOutQuint(scaleT));
             if (scaleT >= 1.0f)
             {
                 isStart = true;
@@ -43,10 +54,10 @@ public class EnemyScript : MonoBehaviour
 
         if (isStart)
         {
-            //endPosition = new Vector3(0, player.transform.position.y, 0);
-            //position = Vector3.Lerp(position, endPosition, t * Time.deltaTime);
-            //transform.position = position;
-            if (transform.localScale.x > 4f)
+            endPosition = new Vector3(0, player.transform.position.y, 0);
+            position = Vector3.Lerp(position, endPosition, t * Time.deltaTime);
+            transform.position = position;
+            if (transform.localScale.x > 10f)
             {
                 Destroy(gameObject);
             }
@@ -57,11 +68,46 @@ public class EnemyScript : MonoBehaviour
 
     private void Shot()
     {
-        shotCoolTime -= Time.deltaTime;
+        if (CanFire == false)
+        {
+            shotCoolTime -= Time.deltaTime;
+        }
+
         if (shotCoolTime < 0)
         {
             shotCoolTime = kShotCoolTime;
-            Instantiate(bullet, position, Quaternion.identity);
+            CanFire = true;
+            Instantiate(beamWarning, transform.position, Quaternion.identity);
+            //Instantiate(bullet, position, Quaternion.identity);
+        }
+
+        if (CanFire)
+        {
+            beamWarningTime -= Time.deltaTime;
+
+            if (beamWarningTime < 0)
+            {
+                CanFire = false;
+                beamWarningTime = kBeamWarningTime;
+
+                EnemyBeamScript newBeam = Instantiate(beam, transform.position, Quaternion.identity);
+                newBeam.SetFireTime(1f);
+                fireTime = 1f;
+                newBeam.SetRotate();
+            }
+        }
+
+        fireTime -= Time.deltaTime;
+
+        Debug.Log(CanFire);
+
+        if (CanFire || fireTime > 0)
+        {
+            isWeak = true;
+        }
+        else
+        {
+            isWeak = false;
         }
     }
 
@@ -69,7 +115,7 @@ public class EnemyScript : MonoBehaviour
     {
         if (other.gameObject.tag == "Bullet")
         {
-            transform.localScale += other.gameObject.GetComponent<BulletScript>().scale / 3f;
+            transform.localScale += Vector3.one / 2f;
         }
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerAimScript : MonoBehaviour
 {
     private Vector3 playerPos;
-    public Vector3 PlayerPos { set; get; }
+    public Vector3 PlayerPos { set { playerPos = value; } }
 
     private LineRenderer lineRenderer;
 

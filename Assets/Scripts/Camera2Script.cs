@@ -17,6 +17,10 @@ public class Camera2Script : MonoBehaviour
     void Update()
     {
         position.y += player.GetComponent<PlayerScript>().speed / 0.8f * Time.deltaTime;
+        if (position.y < -100)
+        {
+            position.y = 100;
+        }
         transform.position = position;
     }
 }

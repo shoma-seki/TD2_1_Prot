@@ -13,6 +13,8 @@ public class BulletScript : MonoBehaviour
 
     public Vector3 scale;
 
+    private float aliveTime = 10f;
+
     //private float aliveTime = 3f;
 
     // Start is called before the first frame update
@@ -28,6 +30,11 @@ public class BulletScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Move();
+    }
+
+    private void Move()
+    {
         transform.rotation = Quaternion.LookRotation(direction);
 
         velocity = direction.normalized * speed;
@@ -42,10 +49,18 @@ public class BulletScript : MonoBehaviour
             Destroy(gameObject);
         }
 
-        //aliveTime -= Time.deltaTime;
-        //if (aliveTime < 0f)
-        //{
-        //    Destroy(gameObject);
-        //}
+        aliveTime -= Time.deltaTime;
+        if (aliveTime < 0f)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Enemy")
+        {
+            Destroy(gameObject);
+        }
     }
 }

@@ -21,6 +21,7 @@ public class PlayerScript : MonoBehaviour
     public GameObject bottom;
 
     public GameObject bullet;
+    public GameObject dekaBullet;
     public int loadedBullet = 5;
     private bool isShot;
 
@@ -150,6 +151,11 @@ public class PlayerScript : MonoBehaviour
 
         position.x = distance * Mathf.Sin(theta);
         position.z = distance * Mathf.Cos(theta);
+
+        if (position.y < -100)
+        {
+            position.y = 100;
+        }
 
         transform.position = position;
 
